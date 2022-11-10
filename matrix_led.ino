@@ -128,7 +128,7 @@ inline void set_clr_bit(byte bitnum){
 }
 
 void send_data(uint16_t data){
-    for (uint16_t mask = 1; mask & 0x3ff; mask <<= 1){
+    for (uint16_t mask = 1; mask & 0x3ff; mask <<= 1){ // Extracts one bit at a time from the data 10 times starting with the LSB.
         // Set data pin high if the current bit is 1, else set data pin low.
         bit_data(SERIAL_DATA, data & mask);
         // Set and reset clock pin, telling the shift register to read in the current data pin value.

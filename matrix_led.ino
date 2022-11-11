@@ -145,10 +145,8 @@ void send_frame_buffer(){
             send_data(frame_buffer[row]);
             // This delay defines the time to play each pattern.
             delayMicroseconds(800);
-            // Clear the row so we can go on to the next row without smearing.
-            send_data(0);
-            // On to the next row.
-            set_clr_bit(CD4017_CLK);
+            send_data(0); // Clear the row so we can go on to the next row without smearing.
+            set_clr_bit(CD4017_CLK); // On to the next row.
         }
         // Select the first row.
         set_clr_bit(CD4017_RST);
@@ -177,10 +175,8 @@ void display_message(){
 }
 
 int main(){
-    // PORTB as output.
-    DDRB = 0b111111;
-    // Makes sure the 4017 value is 0.
-    set_clr_bit(CD4017_RST);
+    DDRB = 0b111111; // PORTB as output.
+    set_clr_bit(CD4017_RST); // Makes sure the 4017 value is 0.
     
     while (true){
         display_message();

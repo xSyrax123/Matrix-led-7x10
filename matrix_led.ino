@@ -129,35 +129,29 @@ inline void set_clr_bit(byte bitnum){
 
 void send_data(uint16_t data){
     for (uint16_t mask = 1; mask & 0x3ff; mask <<= 1){ // Extracts one bit at a time from the data 10 times starting with the LSB.
-        // Set data pin high if the current bit is 1, else set data pin low.
-        bit_data(SERIAL_DATA, data & mask);
-        // Set and reset clock pin, telling the shift register to read in the current data pin value.
-        set_clr_bit(SH_CLK);
+        bit_data(SERIAL_DATA, data & mask); // Set data pin high if the current bit is 1, else set data pin low.
+        set_clr_bit(SH_CLK); // Set and reset clock pin, telling the shift register to read in the current data pin value.
     }
-    // Set and reset latch pin to display the data at the output of the shift registers.
-    set_clr_bit(ST_CLK);
+    set_clr_bit(ST_CLK); // Set and reset latch pin to display the data at the output of the shift registers.
 }
 
 void send_frame_buffer(){
     for (byte t = 0; t < DELAY; t++){ // The delay we get with loops.
         for (byte row = 0; row < 7; row++){ // For each row.
-            // Send 10 bits to shift registers.
-            send_data(frame_buffer[row]);
-            // This delay defines the time to play each pattern.
-            delayMicroseconds(800);
+            send_data(frame_buffer[row]); // Send 10 bits to shift registers.
+            delayMicroseconds(800); // This delay defines the time to play each pattern.
             send_data(0); // Clear the row so we can go on to the next row without smearing.
             set_clr_bit(CD4017_CLK); // On to the next row.
         }
-        // Select the first row.
-        set_clr_bit(CD4017_RST);
+        set_clr_bit(CD4017_RST);  // Select the first row.
     }
 }
 
 void display_message(){
-    for (byte c = 0;  c < string_length; c++){ // For each character.
+    for (byte c = 0;  c < string_length; c++){
         byte mask = 0x10;
-        for (byte column = 0; column < 5; column++){ // For each column.
-            for (byte row = 0; row < 7; row++){ // For each row.
+        for (byte column = 0; column < 5; column++){
+            for (byte row = 0; row < 7; row++){
                 // To obtain the position of the current character in the char_data array, subtract 32 from the ASCII value of the character itself.     
                 byte index = message[c];
                 byte temp = char_data[index-32][row];
@@ -166,8 +160,7 @@ void display_message(){
             send_frame_buffer();
             mask >>= 1;
         }
-        // One column of separation between characters.
-        for (byte row = 0; row < 7; row++){
+        for (byte row = 0; row < 7; row++){ // One column of separation between characters.
             frame_buffer[row] <<= 1;
         }
         send_frame_buffer();

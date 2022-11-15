@@ -151,9 +151,8 @@ void display_message(char* message, byte string_length){
     for (byte c = 0;  c < string_length; c++){
         byte mask = 0x10;
         for (byte column = 0; column < 5; column++){
-            for (byte row = 0; row < 7; row++){
-                // To obtain the position of the current character in the char_data array, subtract 32 from the ASCII value of the character itself.     
-                byte index = message[c];
+            for (byte row = 0; row < 7; row++){  
+                byte index = message[c];  // To get the character position in char_data, subtract 32 from the ASCII value of the character.   
                 byte temp = char_data[index-32][row];
                 frame_buffer[row] = (frame_buffer[row]<<1) | ((temp&mask)>>4-column);
             }

@@ -170,6 +170,7 @@ void display_message(){
 int main(){
     DDRB = 0b111111; // PORTB as output.
     set_clr_bit(CD4017_RST); // Makes sure the 4017 value is 0.
+    Serial.begin(9600);
     
     while (true){
         display_message();

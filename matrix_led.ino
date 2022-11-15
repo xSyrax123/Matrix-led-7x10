@@ -4,6 +4,7 @@
 #define ST_CLK PORTB4
 #define SH_CLK PORTB5
 #define DELAY 15
+#define MAX_CHARS 100
 
 /*
  char_data is a two dimensional constant array that holds the 5-bit column values
@@ -107,8 +108,7 @@ const byte char_data[95][7]={
     {0x0, 0x0, 0x0, 0xA, 0x15, 0x0, 0x0}, // ~
 };
 uint16_t frame_buffer[7];
-char* message = "MATRIX LED 7x10  ";
-byte string_length = strlen(message);
+char rx_buf[MAX_CHARS];
 
 inline void set_bit(byte bitnum){
     PORTB |= (1 << bitnum);
@@ -147,7 +147,7 @@ void send_frame_buffer(){
     }
 }
 
-void display_message(){
+void display_message(char* message, byte string_length){
     for (byte c = 0;  c < string_length; c++){
         byte mask = 0x10;
         for (byte column = 0; column < 5; column++){
@@ -173,6 +173,12 @@ int main(){
     Serial.begin(9600);
     
     while (true){
-        display_message();
+        byte charsRead;
+
+        if (Serial.available()) {
+            charsRead = Serial.readBytesUntil('\n', rx_buf, sizeof(rx_buf) - 1);  
+            rx_buf[charsRead] = '\0';
+            display_message(rx_buf, charsRead);
+        }
     }
 }

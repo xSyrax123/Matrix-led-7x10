@@ -108,21 +108,23 @@ const byte char_data[95][7]={
     {0x0, 0x0, 0x0, 0xA, 0x15, 0x0, 0x0}, // ~
 };
 uint16_t frame_buffer[7];
-char rx_buf[MAX_CHARS];
+char message[MAX_CHARS] = "MATRIX LED 7X10  ";
+byte string_length = strlen(message);
 
-inline void set_bit(byte bitnum){
+void set_bit(byte bitnum){
     PORTB |= (1 << bitnum);
 }
 
-inline void clr_bit(byte bitnum){
+void clr_bit(byte bitnum){
     PORTB &= ~(1 << bitnum);
 }
 
-inline void bit_data(byte bitnum, bool val){
-    (val) ? set_bit(bitnum) : clr_bit(bitnum);
+void bit_data(byte bitnum, bool val){
+    if (val) set_bit(bitnum);
+    else clr_bit(bitnum);
 }
 
-inline void set_clr_bit(byte bitnum){
+void set_clr_bit(byte bitnum){
     set_bit(bitnum);
     clr_bit(bitnum);
 }
@@ -147,18 +149,22 @@ void send_frame_buffer(){
     }
 }
 
-void display_message(char* message, byte string_length){
-    for (byte c = 0;  c < string_length; c++){
-        byte mask = 0x10;
-        for (byte column = 0; column < 5; column++){
-            for (byte row = 0; row < 7; row++){  
-                byte index = message[c]; 
-                byte temp = char_data[index-32][row];
-                frame_buffer[row] = (frame_buffer[row]<<1) | ((temp&mask)>>4-column);
-            }
-            send_frame_buffer();
-            mask >>= 1;
+void load_char(byte pos){
+    byte mask = 0x10;
+    for (byte column = 0; column < 5; column++){
+        for (byte row = 0; row < 7; row++){  
+            byte index = message[pos]; 
+            byte temp = char_data[index-32][row];
+            frame_buffer[row] = (frame_buffer[row]<<1) | ((temp&mask)>>4-column);
         }
+        send_frame_buffer();
+        mask >>= 1;
+    }
+}
+
+void display_message(){
+    for (byte c = 0;  c < string_length; c++){
+        load_char(c);
         for (byte row = 0; row < 7; row++){ // One column of separation between characters.
             frame_buffer[row] <<= 1;
         }
@@ -169,15 +175,9 @@ void display_message(char* message, byte string_length){
 int main(){
     DDRB = 0b111111; // PORTB as output.
     set_clr_bit(CD4017_RST); // Makes sure the 4017 value is 0.
-    Serial.begin(9600);
+    send_data(0); // Clear shift registers.
     
     while (true){
-        byte charsRead;
-
-        if (Serial.available()) {
-            charsRead = Serial.readBytesUntil('\n', rx_buf, sizeof(rx_buf) - 1);  
-            rx_buf[charsRead] = '\0';
-            display_message(rx_buf, charsRead);
-        }
+        display_message();
     }
 }

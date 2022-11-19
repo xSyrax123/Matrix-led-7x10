@@ -111,20 +111,20 @@ uint16_t frame_buffer[7];
 char message[MAX_CHARS] = "MATRIX LED 7X10  ";
 byte string_length = strlen(message);
 
-void set_bit(byte bitnum){
+inline void set_bit(byte bitnum){
     PORTB |= (1 << bitnum);
 }
 
-void clr_bit(byte bitnum){
+inline void clr_bit(byte bitnum){
     PORTB &= ~(1 << bitnum);
 }
 
-void bit_data(byte bitnum, bool val){
+inline void bit_data(byte bitnum, bool val){
     if (val) set_bit(bitnum);
     else clr_bit(bitnum);
 }
 
-void set_clr_bit(byte bitnum){
+inline void set_clr_bit(byte bitnum){
     set_bit(bitnum);
     clr_bit(bitnum);
 }

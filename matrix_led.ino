@@ -4,7 +4,6 @@
 #define ST_CLK PORTB4
 #define SH_CLK PORTB5
 #define DELAY 15
-#define MAX_CHARS 100
 
 /*
  char_data is a two dimensional constant array that holds the 5-bit column values
@@ -108,7 +107,7 @@ const byte char_data[95][7]={
     {0x0, 0x0, 0x0, 0xA, 0x15, 0x0, 0x0}, // ~
 };
 uint16_t frame_buffer[7];
-char message[MAX_CHARS] = "MATRIX LED 7X10  ";
+char* message = "MATRIX LED 7X10  ";
 byte string_length = strlen(message);
 
 inline void set_bit(byte bitnum){

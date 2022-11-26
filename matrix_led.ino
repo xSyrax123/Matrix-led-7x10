@@ -112,11 +112,11 @@ char message[MAX_CHARS] = "MATRIX LED 7X10  ";
 byte string_length = strlen(message);
 
 inline void set_bit(byte bitnum){
-    PORTB |= (1 << bitnum);
+    PORTB |= _BV(bitnum);
 }
 
 inline void clr_bit(byte bitnum){
-    PORTB &= ~(1 << bitnum);
+    PORTB &= ~_BV(bitnum);
 }
 
 inline void bit_data(byte bitnum, bool val){
@@ -141,7 +141,7 @@ void send_frame_buffer(){
     for (byte t = 0; t < DELAY; t++){ // The delay we get with loops.
         for (byte row = 0; row < 7; row++){ // For each row.
             send_data(frame_buffer[row]); // Send 10 bits to shift registers.
-            delayMicroseconds(800); // This delay defines the time to play each pattern.
+            _delay_us(800); // This delay defines the time to play each pattern.
             send_data(0); // Clear the row so we can go on to the next row without smearing.
             set_clr_bit(CD4017_CLK); // On to the next row.
         }

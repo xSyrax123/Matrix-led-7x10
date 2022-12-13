@@ -174,7 +174,7 @@ int main(){
     set_clr_bit(CD4017_RST); // Makes sure the 4017 value is 0.
     send_data(0); // Clear shift registers.
     
-    while (true){
+    while (1){
         display_message();
     }
 }

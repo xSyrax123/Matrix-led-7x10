@@ -149,15 +149,13 @@ void send_frame_buffer(){
 }
 
 void load_char(byte pos){
-    byte mask = 0x10;
     for (byte column = 0; column < 5; column++){
         for (byte row = 0; row < 7; row++){  
             byte index = message[pos]; 
             byte temp = char_data[index-32][row];
-            frame_buffer[row] = (frame_buffer[row]<<1) | ((temp&mask)>>4-column);
+            frame_buffer[row] = (frame_buffer[row]<<1) | (temp>>4-column);
         }
         send_frame_buffer();
-        mask >>= 1;
     }
 }
 
